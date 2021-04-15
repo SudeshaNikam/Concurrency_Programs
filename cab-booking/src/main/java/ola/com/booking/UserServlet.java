@@ -29,6 +29,7 @@ public class UserServlet extends HttpServlet {
 
 	@Override
 	protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+		
 		if (req.getParameter("action").equals("register")) {
 			User user = new User();
 			user.setName(req.getParameter("name"));
@@ -41,14 +42,20 @@ public class UserServlet extends HttpServlet {
 		}
 
 		if (req.getParameter("action").equals("login")) {
-			User user = userService.validateUser(req.getParameter("name"), req.getParameter("passowrd"));
+			Boolean isExist = userService.validateUser(req.getParameter("name"), req.getParameter("passowrd"));
+			System.out.println("name" + req.getParameter("name"));
+			String Uname = req.getParameter("name");
+			List<User> userList = userService.getUserData(Uname);
 			// instead of boolean get user object
 			resp.setContentType("text/html;charset=UTF-8");
 			PrintWriter out = resp.getWriter();
-			if (user != null) {
+			if (isExist) {
+				for (User user2 : userList) {
+					int idd = user2.getuserId();
+					req.setAttribute("USERID", idd + "");
+				}
 				RequestDispatcher rd = req.getRequestDispatcher("routes");
-				int id = user.getuserId();
-				req.setAttribute("USERID", id + "");
+
 				rd.forward(req, resp);
 			} else {
 				out.println("<font color='red'><b>You have entered incorrect password</b></font>");
@@ -67,7 +74,5 @@ public class UserServlet extends HttpServlet {
 			rd.forward(req, resp);
 
 		}
-
 	}
-
 }
