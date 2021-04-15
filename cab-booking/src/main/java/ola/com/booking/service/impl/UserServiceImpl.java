@@ -20,12 +20,12 @@ public class UserServiceImpl implements UserService{
 	}
 
 	@Override
-	public User validateUser(String username, String password) {
+	public boolean validateUser(String username, String password) {
 		return userDao.validateUser(username, password);
 	}
 
 	@Override
-	public List<User> getUserData() {
-		return userDao.getUserData();
+	public List<User> getUserData(String uname) {
+		return userDao.getUserData(uname);
 	}
 }
