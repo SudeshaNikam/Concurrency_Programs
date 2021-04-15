@@ -8,7 +8,7 @@ public interface UserService {
 
 	public void saveUser(User user);
 
-	public User validateUser(String username, String password);
+	public boolean validateUser(String username, String password);
 
-	public List<User> getUserData();
+	public List<User> getUserData(String uname);
 }
