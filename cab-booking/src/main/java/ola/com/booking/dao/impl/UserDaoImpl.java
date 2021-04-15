@@ -34,13 +34,28 @@ public class UserDaoImpl implements UserDao {
 	}
 
 	@Override
-	public User validateUser(String username, String password) {
-		User user = new User();
+	public boolean validateUser(String username, String password) {
 		try {
-			PreparedStatement stmt = conn.prepareStatement("SELECT * FROM User where name = ? and password = ?");
+			PreparedStatement stmt = conn
+					.prepareStatement("SELECT EXISTS(SELECT * FROM User WHERE name=? and password=?)");
 			stmt.setString(1, username);
 			stmt.setString(2, password);
 
+			return stmt.execute();
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return false;
+	}
+
+	@Override
+	public List<User> getUserData(String uname) {
+		List<User> userlist = new ArrayList<User>();
+		User user = new User();
+		try {
+			PreparedStatement stmt = conn.prepareStatement("SELECT * FROM User where name = ? ");
+			stmt.setString(1, uname);
 			ResultSet rs = stmt.executeQuery();
 			while (rs.next()) {
 				user.setId(rs.getInt("userId"));
@@ -48,27 +63,7 @@ public class UserDaoImpl implements UserDao {
 				user.setName(rs.getString("name"));
 				user.setPhoneNo(rs.getString("phoneNo"));
 				user.setEmail(rs.getString("email"));
-			}
-
-			return user;
-		} catch (SQLException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		return null;
-	}
-
-	@Override
-	public List<User> getUserData() {
-		List<User> userlist = new ArrayList<User>();
-		try {
-			ResultSet result = conn.createStatement().executeQuery("select * from user");
-			while (result.next()) {
-				User user = new User();
-				user.setId(result.getInt("userId"));
-				user.setName(result.getString("name"));
 				userlist.add(user);
-
 			}
 			return userlist;
 
